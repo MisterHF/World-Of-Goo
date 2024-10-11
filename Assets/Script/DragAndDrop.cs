@@ -3,6 +3,10 @@ using UnityEngine;
 public class DragAndDrop : MonoBehaviour
 {
     private Vector3 mousePosition;
+    private bool _isPosed = false;
+
+    public Cells Cells;
+
 
     private Vector3 GetMousePos()
     {
@@ -11,12 +15,28 @@ public class DragAndDrop : MonoBehaviour
 
     private void OnMouseDown()
     {
-        mousePosition = gameObject.transform.position - GetMousePos();
+        if (!_isPosed)
+        {
+            mousePosition = gameObject.transform.position - GetMousePos();
+        }
+  
     }
 
     private void OnMouseDrag()
     {
-        transform.position = GetMousePos() + mousePosition;
-        //appel de fonction sphere overlap et de genration des liens
+        if (!_isPosed)
+        {
+            transform.position = GetMousePos() + mousePosition;
+        }
+        
+    }
+
+    private void OnMouseUp()
+    {
+        if (!_isPosed) 
+        { 
+            Cells.CreateLink(); 
+            _isPosed = true;
+        }
     }
 }

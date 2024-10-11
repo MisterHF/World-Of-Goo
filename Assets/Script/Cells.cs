@@ -3,36 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class Goo : MonoBehaviour
+public class Cells : MonoBehaviour
 {
     private Transform _transform;
 
-    private float _minDist = 1.0f;
-    private float _maxDist = 10f;
-    private bool _isPossed = false;
+    [SerializeField] private float _minDistPosed = 1.0f;
+    [SerializeField] private float _maxDistPosed = 10f;
+
+    [SerializeField] private int _maxLink = 3;
+    [SerializeField] private float _frequency = 100f;
+    
 
     private List<Collider2D> _findCollider = new List<Collider2D>();
-
-
-    // j'ai besoin de récupérer les liens proches du goo et de faire appel à la liste
-    // j'ai besoin d'un booléen pour savoir si le goo et pose ou non 
-    // la vitesse des goo qui ne sont pas utilisé et qui ce déplacent dans la construction deja créée  //[SerializeField] private float speed = 1.0f;
-    // récupérer le transform du monstre pour lui donner le circle Overlap
-    // au start récupérer le transform pour evité de le créer en boucle dans le update avec une variable et au start
-    // créer deux circle overlap pour la distance min et maxi pour poser un goo
-    // Creer une liste des colliders rencontre
-
-
-
-
-    // Objectif. poser un goo que j'ai saisi proche de 2 goo déjà placé et créer des spring joint pour les relier.
-    // créer 2 circle overlap pour 1: détecter la distance minimum avec notre goo 2: la distance max avec les goo
-    // garder l'info des colliders des goo dans une liste et conserver les 2 plus proches de celui saisi.
-    // une fois les deux plus proches identifiés. Créer 2 spring joint pour se raccorder à ces deux goo
-    // et passer l'état du goo saisi en goo "posé"
-
-
-
 
     void Start()
     {
@@ -43,25 +25,36 @@ public class Goo : MonoBehaviour
     
     void Update()
     {
-       _findCollider = Physics2D.OverlapCircleAll(_transform.position, _maxDist, 1 << LayerMask.NameToLayer("Cell")).ToList();           //utiliser la distance max pour savoir si on peut poser le goo
+       _findCollider = Physics2D.OverlapCircleAll(_transform.position, _maxDistPosed, 1 << LayerMask.NameToLayer("Anchor")).ToList();           
     }
 
-    private void CreateLink()
+    public void CreateLink()
     {
-        if (_isPossed)
+        SortList(_findCollider);
+        for(int i = 0; i < _findCollider.Count; i++)
         {
-            gameObject.AddComponent<SpringJoint>();
-            //gameObject.GetComponent<SpringJoint>().connectedBody = le rigidebody de la cible a relier
-        }
-    }
+            if (i >= _maxLink)
+                break;                                                                          // break = permet de sortir de la boucle
 
-    private void FindRigidebody() 
-    { 
+            SpringJoint2D joint = gameObject.AddComponent<SpringJoint2D>();
+            joint.connectedBody = _findCollider[i].GetComponent<Rigidbody2D>();
+            joint.autoConfigureDistance = false;
+            joint.frequency = _frequency;
+        }
 
     }
 
     private void SortList(List<Collider2D> list)
     {
-        //récupérer tous les colliders / récupérer l'infos de chacun des transform de chaque collider / prendre ceux les plus proches de mon transform de "cette cellule / ce" gameobject
+        for (int i = 0; i < list.Count; i++)                                 // Lorsque i = 0 la deuxième boucle for parcours la liste j jusqu'au bout 
+        {                                                                    // Une fois j verifier i = 1 
+            for(int j = 0; j < list.Count; j++)
+            {
+                if(Vector2.Distance(transform.position, list[j].transform.position) > Vector2.Distance(transform.position, list[j++].transform.position))
+                {
+                    (list[j++], list[j]) = (list[j], list[j++]);
+                }
+            }
+        }
     }
 }
