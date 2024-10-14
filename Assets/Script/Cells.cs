@@ -8,10 +8,11 @@ public class Cells : MonoBehaviour
     private Transform _transform;
 
     [SerializeField] private float _minDistPosed = 1.0f;
-    [SerializeField] private float _maxDistPosed = 10f;
+    [SerializeField] private float _maxDistPosed = 2f;
 
-    [SerializeField] private int _maxLink = 3;
-    [SerializeField] private float _frequency = 100f;
+    [SerializeField] private int _maxLink = 2;
+    [SerializeField] private float _frequency = 6f;
+
     
 
     private List<Collider2D> _findCollider = new List<Collider2D>();
@@ -28,10 +29,12 @@ public class Cells : MonoBehaviour
        _findCollider = Physics2D.OverlapCircleAll(_transform.position, _maxDistPosed, 1 << LayerMask.NameToLayer("Anchor")).ToList();           
     }
 
-    public void CreateLink()
+    public void CreateLink(GameObject Cell)
     {
         SortList(_findCollider);
-        for(int i = 0; i < _findCollider.Count; i++)
+        if (_findCollider.Count <= 1)
+            return; 
+        for (int i = 0; i < _findCollider.Count; i++)
         {
             if (i >= _maxLink)
                 break;                                                                          // break = permet de sortir de la boucle
@@ -40,8 +43,11 @@ public class Cells : MonoBehaviour
             joint.connectedBody = _findCollider[i].GetComponent<Rigidbody2D>();
             joint.autoConfigureDistance = false;
             joint.frequency = _frequency;
+            joint.dampingRatio = 1;
+            print("enter");
         }
-
+        Cell.layer = 7;
+        Cell.GetComponent<DragAndDrop>()._isPosed = true;
     }
 
     private void SortList(List<Collider2D> list)

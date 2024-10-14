@@ -3,7 +3,7 @@ using UnityEngine;
 public class DragAndDrop : MonoBehaviour
 {
     private Vector3 mousePosition;
-    private bool _isPosed = false;
+    public bool _isPosed = false;
 
     public Cells Cells;
 
@@ -18,6 +18,7 @@ public class DragAndDrop : MonoBehaviour
         if (!_isPosed)
         {
             mousePosition = gameObject.transform.position - GetMousePos();
+            GetComponent<Collider2D>().enabled = false;
         }
   
     }
@@ -35,8 +36,8 @@ public class DragAndDrop : MonoBehaviour
     {
         if (!_isPosed) 
         { 
-            Cells.CreateLink(); 
-            _isPosed = true;
+            Cells.CreateLink(gameObject);
+            GetComponent<Collider2D>().enabled = true;
         }
     }
 }
