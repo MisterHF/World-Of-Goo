@@ -38,6 +38,7 @@ public class DragAndDrop : MonoBehaviour
         { 
             Cells.CreateLink(gameObject);
             GetComponent<Collider2D>().enabled = true;
+            gameObject.tag = "Anchor";
         }
     }
 }
