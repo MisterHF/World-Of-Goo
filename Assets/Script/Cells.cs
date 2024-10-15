@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -27,7 +28,8 @@ public class Cells : MonoBehaviour
     
     void Update()
     {
-       _findCollider = Physics2D.OverlapCircleAll(_transform.position, _maxDistPosed, 1 << LayerMask.NameToLayer("Anchor")).ToList();           
+       _findCollider = Physics2D.OverlapCircleAll(_transform.position, _maxDistPosed, 1 << LayerMask.NameToLayer("Anchor")).ToList();
+       _findCollider = Physics2D.OverlapCircleAll(_transform.position, _minDistPosed, 1 << LayerMask.NameToLayer("Anchor")).ToList();
     }
 
     public void CreateLink(GameObject Cell)
@@ -46,6 +48,11 @@ public class Cells : MonoBehaviour
             joint.frequency = _frequency;
             joint.dampingRatio = 1;
             print("enter");
+
+            GetComponent<Rigidbody2D>().gravityScale = 1f;
+            
+            
+            // LineRenderer renderer = gameObject.AddComponent<LineRenderer>();
         }
         Cell.layer = 7;
         Cell.GetComponent<DragAndDrop>()._isPosed = true;
