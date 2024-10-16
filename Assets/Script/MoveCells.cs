@@ -23,6 +23,9 @@ public class MoveCells : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if ((gameObject.layer == 7))
+            return;
+
         Vector3 _screenPos = _camera.WorldToScreenPoint(transform.position);
 
         float _rightSideOfTheScreen = _camera.ScreenToWorldPoint(new Vector2(Screen.width, Screen.height)).x;

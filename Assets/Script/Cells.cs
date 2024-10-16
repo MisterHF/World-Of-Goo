@@ -17,7 +17,10 @@ public class Cells : MonoBehaviour
 
     
 
-    private List<Collider2D> _findCollider = new List<Collider2D>();
+    private List<Collider2D> _findFarCollider = new List<Collider2D>();
+    private List<Collider2D> _findCloseCollider = new List<Collider2D>();
+
+    [SerializeField] private GameObject _prefabLink;
 
     void Start()
     {
@@ -28,30 +31,36 @@ public class Cells : MonoBehaviour
     
     void Update()
     {
-       _findCollider = Physics2D.OverlapCircleAll(_transform.position, _maxDistPosed, 1 << LayerMask.NameToLayer("Anchor")).ToList();
-       _findCollider = Physics2D.OverlapCircleAll(_transform.position, _minDistPosed, 1 << LayerMask.NameToLayer("Anchor")).ToList();
+       _findFarCollider = Physics2D.OverlapCircleAll(_transform.position, _maxDistPosed, 1 << LayerMask.NameToLayer("Anchor")).ToList();
+       _findCloseCollider = Physics2D.OverlapCircleAll(_transform.position, _minDistPosed, 1 << LayerMask.NameToLayer("Anchor")).ToList();
     }
 
     public void CreateLink(GameObject Cell)
     {
-        SortList(_findCollider);
-        if (_findCollider.Count <= 1)
+        SortList(_findFarCollider);
+        if (_findFarCollider.Count <= 1 || _findCloseCollider.Count > 0)
             return; 
-        for (int i = 0; i < _findCollider.Count; i++)
+        for (int i = 0; i < _findFarCollider.Count; i++)
         {
             if (i >= _maxLink)
                 break;                                                                          // break = permet de sortir de la boucle
 
             SpringJoint2D joint = gameObject.AddComponent<SpringJoint2D>();
-            joint.connectedBody = _findCollider[i].GetComponent<Rigidbody2D>();
+            joint.connectedBody = _findFarCollider[i].GetComponent<Rigidbody2D>();
             joint.autoConfigureDistance = false;
             joint.frequency = _frequency;
             joint.dampingRatio = 1;
             print("enter");
 
             GetComponent<Rigidbody2D>().gravityScale = 1f;
+
+            GameObject linkRenderer = Instantiate(_prefabLink);
+            LinkTransformManager.instance.linkRenderer.Add(linkRenderer.transform);
+            LinkCellsManager linkCellsManager = linkRenderer.GetComponent<LinkCellsManager>();
+            linkCellsManager.node1 = Cell.transform;
+            linkCellsManager.node2 = _findFarCollider[i].transform;
             
-            
+
             // LineRenderer renderer = gameObject.AddComponent<LineRenderer>();
         }
         Cell.layer = 7;
