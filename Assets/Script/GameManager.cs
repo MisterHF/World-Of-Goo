@@ -3,6 +3,18 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
+    private void Start()
+    {
+        CellsList.Instance.OnCellLinkCreatedAction += CheckCellsUsed;
+    }
+
+    public void CheckCellsUsed(GameObject cell)
+    {
+        if (CellsList.Instance.cellsUsed.Count == CellsManager.Instance.CellCount)
+        {
+            //end game
+        }
+    }
 
     public void Play()
     {
@@ -20,7 +32,7 @@ public class GameManager : MonoBehaviour
         if (collision.CompareTag("Anchor"))
         {
             Debug.Log("Exit scene");
-            SceneManager.LoadScene("Lvl1");
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
         }
     }
 

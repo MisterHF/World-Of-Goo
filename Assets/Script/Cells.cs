@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,10 +23,11 @@ public class Cells : MonoBehaviour
 
     [SerializeField] private GameObject _prefabLink;
 
+    public Action<GameObject> OnLinkCreated;
+
     void Start()
     {
         _transform = transform;
-        
     }
 
     
@@ -42,6 +44,7 @@ public class Cells : MonoBehaviour
             return; 
         for (int i = 0; i < _findFarCollider.Count; i++)
         {
+            
             if (i >= _maxLink)
                 break;                                                                          // break = permet de sortir de la boucle
 
@@ -50,7 +53,6 @@ public class Cells : MonoBehaviour
             joint.autoConfigureDistance = false;
             joint.frequency = _frequency;
             joint.dampingRatio = 1;
-            print("enter");
 
             GetComponent<Rigidbody2D>().gravityScale = 1f;
 
@@ -59,12 +61,16 @@ public class Cells : MonoBehaviour
             LinkCellsManager linkCellsManager = linkRenderer.GetComponent<LinkCellsManager>();
             linkCellsManager.node1 = Cell.transform;
             linkCellsManager.node2 = _findFarCollider[i].transform;
+
             
 
-            // LineRenderer renderer = gameObject.AddComponent<LineRenderer>();
         }
         Cell.layer = 7;
         Cell.GetComponent<DragAndDrop>()._isPosed = true;
+        gameObject.tag = "Anchor";
+                                                                                                //Cell.GetComponent<CircleCollider2D>().excludeLayers -= 1 << LayerMask.NameToLayer("Wall");
+        Cell.GetComponent<CircleCollider2D>().excludeLayers -= 256;                             //256 = valeur binaire de la position du layer 8 "Wall"
+        OnLinkCreated?.Invoke(gameObject);
     }
 
     private void SortList(List<Collider2D> list)
