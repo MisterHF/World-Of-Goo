@@ -13,13 +13,13 @@ public class Cells : MonoBehaviour
     [SerializeField] private float _minDistPosed = 1.0f;
     [SerializeField] private float _maxDistPosed = 2f;
 
-    [SerializeField] private int _maxLink = 2;
+    public int maxLink = 2;
     [SerializeField] private float _frequency = 6f;
 
-    
 
-    private List<Collider2D> _findFarCollider = new List<Collider2D>();
-    private List<Collider2D> _findCloseCollider = new List<Collider2D>();
+
+    [HideInInspector] public List<Collider2D> _findFarCollider = new List<Collider2D>();
+    [HideInInspector] public List<Collider2D> _findCloseCollider = new List<Collider2D>();
 
     [SerializeField] private GameObject _prefabLink;
 
@@ -45,7 +45,7 @@ public class Cells : MonoBehaviour
         for (int i = 0; i < _findFarCollider.Count; i++)
         {
             
-            if (i >= _maxLink)
+            if (i >= maxLink)
                 break;                                                                          // break = permet de sortir de la boucle
 
             SpringJoint2D joint = gameObject.AddComponent<SpringJoint2D>();
@@ -61,9 +61,6 @@ public class Cells : MonoBehaviour
             LinkCellsManager linkCellsManager = linkRenderer.GetComponent<LinkCellsManager>();
             linkCellsManager.node1 = Cell.transform;
             linkCellsManager.node2 = _findFarCollider[i].transform;
-
-            
-
         }
         Cell.layer = 7;
         Cell.GetComponent<DragAndDrop>()._isPosed = true;

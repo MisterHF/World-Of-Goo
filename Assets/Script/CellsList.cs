@@ -21,6 +21,11 @@ public class CellsList : MonoBehaviour
         _cellsManager = GetComponent<CellsManager>();
     }
 
+    private void Start()
+    {
+        OnCellLinkCreatedAction += GameManager.instance.CheckCellsUsed;
+    }
+
     public void AddCell(GameObject cell)
     {
         if (cellsNotUsed.Count < _cellsManager.cellVisibleMax)

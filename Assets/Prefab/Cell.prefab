@@ -118,8 +118,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _minDistPosed: 1
   _maxDistPosed: 2
-  _maxLink: 3
+  maxLink: 3
   _frequency: 6
+  _findFarCollider: []
+  _findCloseCollider: []
   _prefabLink: {fileID: 3504597056691773972, guid: 08304bbc544fc9747992e9d45f8a8186, type: 3}
 --- !u!58 &5265231175481369268
 CircleCollider2D:

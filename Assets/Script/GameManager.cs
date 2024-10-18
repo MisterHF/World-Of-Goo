@@ -3,9 +3,17 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
-    private void Start()
+    public static GameManager instance;
+
+    private void Awake()
     {
-        CellsList.Instance.OnCellLinkCreatedAction += CheckCellsUsed;
+        if (instance != null)
+        {
+            DestroyImmediate(gameObject);
+            return;
+        }
+        instance = this;
+        DontDestroyOnLoad(gameObject);
     }
 
     public void CheckCellsUsed(GameObject cell)
@@ -16,25 +24,8 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void Play()
+    public void Play(int index)
     {
-        SceneManager.LoadScene("Lvl1");
+        SceneManager.LoadScene(index);
     }
-
-    public void Quit()
-    {
-        Application.Quit();
-        Debug.Log("Quit ?");
-    }
-
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.CompareTag("Anchor"))
-        {
-            Debug.Log("Exit scene");
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
-        }
-    }
-
-
 }
